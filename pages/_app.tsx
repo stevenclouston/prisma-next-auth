@@ -1,9 +1,9 @@
 import { Provider } from "next-auth/client";
 import { AppProps } from "next/app";
 
-const App = ({ Component, pageProps }: AppProps) => {
+const App = ({ Component, pageProps: { session, ...pageProps } }) => {
   return (
-    <Provider session={pageProps.session}>
+    <Provider session={session}>
       <Component {...pageProps}></Component>
     </Provider>
   );

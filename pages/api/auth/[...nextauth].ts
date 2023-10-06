@@ -1,21 +1,18 @@
-import NextAuth from "next-auth";
+import NextAuth, { type NextAuthOptions } from "next-auth";
 import Providers from "next-auth/providers";
-import Adapters from "next-auth/adapters";
-
-import { NextApiHandler } from "next";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options);
-export default authHandler;
+import { NextApiHandler } from "next";
 
-const options = {
+const options: NextAuthOptions = {
   providers: [
-    Providers.GitHub({
-      clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
-    }),
+    // Providers.GitHub({
+    //   clientId: process.env.GITHUB_ID,
+    //   clientSecret: process.env.GITHUB_SECRET,
+    // }),
     Providers.Email({
       server: {
         host: process.env.SMTP_HOST,
@@ -28,10 +25,10 @@ const options = {
       from: process.env.SMTP_FROM,
     }),
   ],
-  // @ts-ignore
-  adapter: Adapters.Prisma.Adapter({
-    prisma,
-  }),
+  adapter: PrismaAdapter(prisma),
 
   secret: process.env.SECRET,
 };
+
+const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options);
+export default authHandler;

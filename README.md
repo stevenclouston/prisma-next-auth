@@ -408,7 +408,9 @@ const secretHandler: NextApiHandler = async (req, res) => {
   const session = await getSession({ req });
   if (session) {
     res.end(
-      `Welcome to the VIP club, ${session.user.name || session.user.email}!`
+      `Welcome, ${
+        session.user.name || session.user.email
+      }, you're now logged in`
     );
   } else {
     res.statusCode = 403;
