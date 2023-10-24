@@ -1,19 +1,47 @@
 import NextAuth from "next-auth";
 import { createTransport } from "nodemailer";
-import Providers from "next-auth/providers";
-import Adapters from "next-auth/adapters";
 import { PrismaClient } from "@prisma/client";
+import EmailProvider from "next-auth/providers/email";
 
 const prisma = new PrismaClient();
 
-import { NextApiHandler } from "next";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
-export default NextAuth({
-  adapter: Adapters.Prisma.Adapter({
-    prisma,
-  }),
+export const authOptions = {
+  adapter: PrismaAdapter(prisma),
+
+  callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      console.log("SIGNED IN");
+
+      console.log({ user, account, profile, email, credentials });
+
+      const isAllowedToSignIn = true;
+      if (isAllowedToSignIn) {
+        return true;
+      } else {
+        // Return false to display a default error message
+        return false;
+        // Or you can return a URL to redirect to:
+        // return '/unauthorized'
+      }
+    },
+    async session({ session, token, user }: any) {
+      //hook into authsignal here
+      console.log("SESSIOn");
+
+      console.log({ token });
+      // Send properties to the client, like an access_token and user id from a provider.
+      session.accessToken = token?.accessToken;
+      session.user.id = token?.id;
+
+      console.log({ session });
+
+      return session;
+    },
+  },
   providers: [
-    Providers.Email({
+    EmailProvider({
       server: {
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT),
@@ -27,15 +55,14 @@ export default NextAuth({
     }),
   ],
   secret: process.env.SECRET,
-});
+};
 
 async function customVerificationRequest(params) {
   const { identifier, url, provider, theme } = params;
-  console.log({ theme });
   const { host } = new URL(url);
   // NOTE: You are not required to use `nodemailer`, use whatever you want.
   const transport = createTransport(provider.server);
-  console.log({ transport });
+
   const result = await transport.sendMail({
     to: identifier,
     from: provider.from,
@@ -112,3 +139,5 @@ function html(params: { url: string; host: string; theme: Theme }) {
 function text({ url, host }: { url: string; host: string }) {
   return `Sign in to ${host}\n${url}\n\n`;
 }
+
+export default NextAuth(authOptions);

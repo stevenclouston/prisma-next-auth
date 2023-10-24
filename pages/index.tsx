@@ -1,9 +1,41 @@
-import { signIn, signOut, useSession } from "next-auth/client";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { useEffect } from "react";
+import { useAuthsignal } from "../utils/authsignal";
 
 const IndexPage = () => {
-  const [session, loading] = useSession();
+  const { data: session, status } = useSession();
 
-  if (loading) {
+  const authsignal = useAuthsignal();
+
+  useEffect(() => {
+    const handlePasskeySignin = async () => {
+      console.log("CALLING handlePasskeySignin");
+
+      const resultToken = await authsignal.passkey.signIn({ autofill: true });
+
+      if (resultToken) {
+        console.log({ resultToken });
+
+        const result = await fetch(`/api/auth/validate/?token=${resultToken}`);
+
+        const tokenData = await result.json();
+
+        console.log({ tokenData });
+      } else {
+        console.log("NO RESULT");
+      }
+    };
+    handlePasskeySignin();
+  }, []);
+
+  const handleClick = () => {
+    signIn("email", {
+      email: "steven@purposetech.io",
+      callbackUrl: "/welcome",
+    });
+  };
+
+  if (status === "loading") {
     return <div>Loading...</div>;
   }
 
@@ -18,7 +50,8 @@ const IndexPage = () => {
     return (
       <div>
         You are not logged in! <br />
-        <button onClick={() => signIn()}>Sign in</button>
+        <input type="text" id="username" autoComplete="username webauthn" />
+        <button onClick={handleClick}>Sign in</button>
       </div>
     );
   }
