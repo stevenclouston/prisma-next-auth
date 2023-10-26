@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import { createTransport } from "nodemailer";
 import { PrismaClient } from "@prisma/client";
 import EmailProvider from "next-auth/providers/email";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 const prisma = new PrismaClient();
 
@@ -10,12 +11,13 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
 
+  session: {
+    strategy: "jwt",
+  },
+
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      console.log("SIGNED IN");
-
       console.log({ user, account, profile, email, credentials });
-
       const isAllowedToSignIn = true;
       if (isAllowedToSignIn) {
         return true;
@@ -29,16 +31,16 @@ export const authOptions = {
     async session({ session, token, user }: any) {
       //hook into authsignal here
       console.log("SESSIOn");
-
       console.log({ token });
       // Send properties to the client, like an access_token and user id from a provider.
       session.accessToken = token?.accessToken;
       session.user.id = token?.id;
-
       console.log({ session });
-
       return session;
     },
+  },
+  pages: {
+    signIn: "/signin",
   },
   providers: [
     EmailProvider({
@@ -52,6 +54,17 @@ export const authOptions = {
       },
       from: process.env.SMTP_FROM,
       sendVerificationRequest: (params) => customVerificationRequest(params),
+    }),
+    CredentialsProvider({
+      name: "webauthn",
+      credentials: {},
+      async authorize(cred, req) {
+        console.log("PASSKEY CREDS:", cred);
+        return {
+          id: "steven@authsignal.com",
+          session: { email: "steven@authsignal.com", name: "Steve" },
+        };
+      },
     }),
   ],
   secret: process.env.SECRET,

@@ -10,14 +10,10 @@ export default async (req, res) => {
 
   const { token } = req.query;
 
-  console.log("RUNNIGN", token);
+  console.log("Running authsignal validate", token);
 
   // console.log("STARTNG", authsignal, opts.input.email);
   const data = await authsignal.validateChallenge({ token: token });
-
-  console.log({ data });
-  // console.log("FINISHDE");
-  // console.log({ token });
 
   // Set the response status code and send JSON response
   res.status(200).json(data);

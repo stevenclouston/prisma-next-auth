@@ -20,12 +20,34 @@ const IndexPage = () => {
 
         const tokenData = await result.json();
 
+        const csrfData = await fetch(`/api/auth/csrf`);
+
+        const data = await csrfData.json();
+
+        const csrfToken = data.csrfToken;
+
+        const res = await fetch("/api/auth/callback/webauthn", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "CSRF-Token": csrfToken,
+          },
+          body: JSON.stringify({
+            "CSRF-Token": csrfToken,
+            creds: tokenData,
+            // Your credentials payload
+          }),
+        });
+
         signIn("credentials", {
           redirect: true,
           provider: "authsignal",
           webauthn: tokenData,
-          // callbackUrl: "/welcome",
+          callbackUrl: "/welcome",
         });
+        // signIn("webauthn");
+
+        console.log({ tokenData });
       } else {
         console.log("NO RESULT");
       }
