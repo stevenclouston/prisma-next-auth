@@ -4,6 +4,13 @@ import { PrismaClient } from "@prisma/client";
 import EmailProvider from "next-auth/providers/email";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+import { Authsignal } from "@authsignal/node";
+
+const authsignal = new Authsignal({
+  secret: process.env.AUTHSIGNAL_TENANT_SECRET || "",
+  apiBaseUrl: "https://au.api.authsignal.com/v1",
+});
+
 const prisma = new PrismaClient();
 
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
@@ -58,12 +65,23 @@ export const authOptions = {
     CredentialsProvider({
       name: "webauthn",
       credentials: {},
-      async authorize(cred, req) {
-        console.log("PASSKEY CREDS:", cred);
-        return {
-          id: "steven@authsignal.com",
-          session: { email: "steven@authsignal.com", name: "Steve" },
-        };
+      async authorize(cred: { authsignalToken: string }, req: any) {
+        const resultToken = cred.authsignalToken;
+
+        try {
+          const result = await authsignal.validateChallenge({
+            token: resultToken,
+          });
+
+          const { state, userId } = result;
+
+          if (state === "CHALLENGE_SUCCEEDED") {
+            return { id: userId, email: userId, name: "Steve" };
+          }
+          return null;
+        } catch (e: any) {
+          console.log(e);
+        }
       },
     }),
   ],

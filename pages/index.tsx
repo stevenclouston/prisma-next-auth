@@ -16,14 +16,10 @@ const IndexPage = () => {
       if (resultToken) {
         console.log({ resultToken });
 
-        const result = await fetch(`/api/auth/validate/?token=${resultToken}`);
-
-        const tokenData = await result.json();
-
         signIn("credentials", {
+          resultToken,
           redirect: true,
           provider: "authsignal",
-          webauthn: tokenData,
           // callbackUrl: "/welcome",
         });
       } else {

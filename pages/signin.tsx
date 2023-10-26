@@ -11,43 +11,17 @@ const IndexPage = () => {
     const handlePasskeySignin = async () => {
       console.log("CALLING handlePasskeySignin", { session });
 
-      const resultToken = await authsignal.passkey.signIn({ autofill: true });
+      const authsignalToken = await authsignal.passkey.signIn({
+        autofill: true,
+      });
 
-      if (resultToken) {
-        console.log({ resultToken });
-
-        const result = await fetch(`/api/auth/validate/?token=${resultToken}`);
-
-        const tokenData = await result.json();
-
-        const csrfData = await fetch(`/api/auth/csrf`);
-
-        const data = await csrfData.json();
-
-        const csrfToken = data.csrfToken;
-
-        const res = await fetch("/api/auth/callback/webauthn", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "CSRF-Token": csrfToken,
-          },
-          body: JSON.stringify({
-            "CSRF-Token": csrfToken,
-            creds: tokenData,
-            // Your credentials payload
-          }),
-        });
-
+      if (authsignalToken) {
         signIn("credentials", {
+          authsignalToken,
           redirect: true,
           provider: "authsignal",
-          webauthn: tokenData,
-          callbackUrl: "/welcome",
+          // callbackUrl: "/welcome",
         });
-        // signIn("webauthn");
-
-        console.log({ tokenData });
       } else {
         console.log("NO RESULT");
       }
@@ -75,6 +49,8 @@ const IndexPage = () => {
   if (status === "loading") {
     return <div>Loading...</div>;
   }
+
+  console.log({ session });
 
   if (session) {
     return (
