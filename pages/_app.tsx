@@ -1,6 +1,7 @@
 import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
 import { AuthsignalProvider } from "../utils/authsignal";
+import "./globals.css";
 
 const App = ({ Component, pageProps: { session, ...pageProps } }) => {
   return (

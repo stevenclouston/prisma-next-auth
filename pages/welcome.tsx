@@ -45,8 +45,10 @@ const WelcomePage = () => {
   }
 
   return (
-    <div>
-      Welcome, {session?.user?.email ?? session?.user?.name} <br />
+    <div className="container">
+      <div className="welcome-message">
+        Welcome, {session?.user?.email ?? session?.user?.name}
+      </div>
       <button onClick={() => signOut({ callbackUrl: "/signin" })}>
         Sign out
       </button>

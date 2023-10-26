@@ -42,17 +42,46 @@ const IndexPage = () => {
 
   if (session) {
     return (
-      <div>
-        Hello, {session.user.email ?? session.user.name} <br />
-        <button onClick={() => signOut()}>Sign out</button>
+      <div className="container">
+        <div>
+          Hello, {session.user.email ?? session.user.name} <br />
+          <button onClick={() => signOut()}>Sign out</button>
+        </div>
       </div>
     );
   } else {
     return (
-      <div>
-        You are not logged in! <br />
-        <input type="text" id="username" autoComplete="username webauthn" />
-        <button onClick={handleClick}>Sign in</button>
+      <div
+        style={{ maxWidth: "300px", margin: "100px auto", textAlign: "center" }}
+      >
+        <div style={{ marginBottom: "20px" }}>
+          <input
+            type="text"
+            id="username"
+            autoComplete="username webauthn"
+            placeholder="Username"
+            style={{
+              width: "200px",
+              padding: "10px",
+              marginBottom: "10px",
+              borderRadius: "5px",
+              border: "1px solid #ccc",
+            }}
+          />
+          <button
+            onClick={handleClick}
+            style={{
+              width: "200px",
+              backgroundColor: "#007bff",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
+          >
+            Sign in
+          </button>
+        </div>
       </div>
     );
   }
