@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useEffect } from "react";
 import { useAuthsignal } from "../utils/authsignal";
 import { useRouter } from "next/router";
@@ -8,62 +8,48 @@ const WelcomePage = () => {
 
   const router = useRouter();
 
-  // const authsignal = useAuthsignal();
+  const { method } = router.query as { method: string };
 
-  // //sign up
-  // useEffect(() => {
-  //   const enrollPasskey = async () => {
-  //     console.log({ session });
-  //     console.log("RUNNING");
-  //     if (!session) {
-  //       return;
-  //     }
-  //     const authsignalUser = await fetch(`/api/auth/get-authsignal-user`);
+  const authsignal = useAuthsignal();
 
-  //     console.log({ authsignalUser });
+  const passkeyEnrollmentPromptMethods = ["email"];
 
-  //     const json = await authsignalUser.json();
+  useEffect(() => {
+    const enrollPasskey = async () => {
+      const authsignalUser = await fetch(`/api/auth/get-authsignal-user`);
 
-  //     console.log({ session });
+      const json = await authsignalUser.json();
 
-  //     if (!json.enrolledVerificationMethods?.includes("PASSKEY")) {
-  //       const response = await fetch(
-  //         `/api/auth/track/?email=${session.user.email}`
-  //       );
+      if (!json.enrolledVerificationMethods?.includes("PASSKEY")) {
+        const response = await fetch(
+          `/api/auth/track/?email=${session.user.email}`
+        );
 
-  //       const token = await response.json();
+        const token = await response.json();
 
-  //       const resultToken = await authsignal.passkey.signUp({
-  //         token,
-  //         userName: session.user.email,
-  //       });
+        const resultToken = await authsignal.passkey.signUp({
+          token,
+          userName: session.user.email,
+        });
 
-  //       const result = await fetch(`/api/auth/validate/?token=${resultToken}`);
-
-  //       console.log({ result });
-
-  //       if (resultToken) {
-  //         // Pass this short-lived result token to your backend to validate that passkey registration succeeded
-  //       }
-  //     }
-  //   };
-  //   enrollPasskey();
-  // }, [session]);
+        await fetch(`/api/auth/validate/?token=${resultToken}`);
+      }
+    };
+    if (session && passkeyEnrollmentPromptMethods.includes(method)) {
+      enrollPasskey();
+    }
+  }, [session]);
 
   if (status === "loading") {
     return <div>Loading...</div>;
   }
 
-  // if (!session) {
-  //   router.push("/");
-  //   return null;
-  // }
-
   return (
     <div>
       Welcome, {session?.user?.email ?? session?.user?.name} <br />
-      {/* <button onClick={() => signOut()}>Sign out</button> */}
-      {/* <input type="text" id="username" autoComplete="username webauthn" /> */}
+      <button onClick={() => signOut({ callbackUrl: "/signin" })}>
+        Sign out
+      </button>
     </div>
   );
 };

@@ -9,8 +9,6 @@ const IndexPage = () => {
 
   useEffect(() => {
     const handlePasskeySignin = async () => {
-      console.log("CALLING handlePasskeySignin", { session });
-
       const authsignalToken = await authsignal.passkey.signIn({
         autofill: true,
       });
@@ -20,7 +18,7 @@ const IndexPage = () => {
           authsignalToken,
           redirect: true,
           provider: "authsignal",
-          // callbackUrl: "/welcome",
+          callbackUrl: "/welcome?method=passkey",
         });
       } else {
         console.log("NO RESULT");
@@ -34,23 +32,13 @@ const IndexPage = () => {
   const handleClick = () => {
     signIn("email", {
       email: "steven@authsignal.com",
-      callbackUrl: "/welcome",
+      callbackUrl: "/welcome?method=email",
     });
   };
-
-  // return (
-  //   <div>
-  //     You are not logged in! <br />
-  //     <input type="text" id="username" autoComplete="username webauthn" />
-  //     <button onClick={handleClick}>Sign in</button>
-  //   </div>
-  // );
 
   if (status === "loading") {
     return <div>Loading...</div>;
   }
-
-  console.log({ session });
 
   if (session) {
     return (
