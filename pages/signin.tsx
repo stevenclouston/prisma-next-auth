@@ -1,5 +1,5 @@
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuthsignal } from "../utils/authsignal";
 
 const IndexPage = () => {
@@ -7,69 +7,53 @@ const IndexPage = () => {
 
   const authsignal = useAuthsignal();
 
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     const handlePasskeySignin = async () => {
+      //Initialize the input for passkey autofill
       const authsignalToken = await authsignal.passkey.signIn({
         autofill: true,
       });
 
+      //Run NextAuth's sign in flow. This will run if the user selects one of their passkeys
+      //from the Webauthn dropdown.
       if (authsignalToken) {
         signIn("credentials", {
           authsignalToken,
-          redirect: true,
-          provider: "authsignal",
-          callbackUrl: "/welcome?method=passkey",
+          callbackUrl: "/welcome",
         });
       }
     };
-    if (session === null) {
+    if (session !== null) {
       handlePasskeySignin();
     }
   }, [session]);
 
-  const handleClick = () => {
-    signIn("email", {
-      email: "steven@authsignal.com",
-      callbackUrl: "/welcome?method=email",
+  const handleClick = async () => {
+    setLoading(true);
+    await signIn("email", {
+      email,
+      callbackUrl: "/welcome",
     });
+    setLoading(false);
   };
 
-  if (status === "loading") {
+  if (loading || status === "loading") {
     return <div>Loading...</div>;
   }
 
   return (
-    <div
-      style={{ maxWidth: "300px", margin: "100px auto", textAlign: "center" }}
-    >
-      <div style={{ marginBottom: "20px" }}>
-        <input
-          type="text"
-          id="email"
-          autoComplete="email webauthn"
-          placeholder="Email"
-          style={{
-            width: "200px",
-            padding: "10px",
-            marginBottom: "10px",
-            borderRadius: "5px",
-            border: "1px solid #ccc",
-          }}
-        />
-        <button
-          onClick={handleClick}
-          style={{
-            width: "220px",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Continue
-        </button>
-      </div>
+    <div>
+      <input
+        type="text"
+        id="email"
+        onChange={(input) => setEmail(input.currentTarget.value)}
+        autoComplete="email webauthn"
+        placeholder="Email"
+      />
+      <button onClick={handleClick}>Continue</button>
     </div>
   );
 };

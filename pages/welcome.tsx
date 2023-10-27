@@ -1,44 +1,43 @@
 import { useSession, signOut } from "next-auth/react";
-import { useEffect } from "react";
 import { useAuthsignal } from "../utils/authsignal";
 import { useRouter } from "next/router";
 
 const WelcomePage = () => {
   const { data: session, status } = useSession();
 
-  const router = useRouter();
-
-  const { method } = router.query as { method: string };
-
   const authsignal = useAuthsignal();
 
-  const passkeyEnrollmentPromptMethods = ["email"];
+  const enrollPasskey = async () => {
+    try {
+      //Get a short lived token by tracking an action
+      const response = await fetch(
+        `/api/auth/track/?email=${session.user.email}`
+      );
 
-  useEffect(() => {
-    const enrollPasskey = async () => {
-      const authsignalUser = await fetch(`/api/auth/get-authsignal-user`);
+      const token = await response.json();
 
-      const json = await authsignalUser.json();
+      //Initiate the passkey enroll flow
+      const resultToken = await authsignal.passkey.signUp({
+        token,
+        userName: session.user.email,
+      });
 
-      if (!json.enrolledVerificationMethods?.includes("PASSKEY")) {
-        const response = await fetch(
-          `/api/auth/track/?email=${session.user.email}`
-        );
+      //Check that the enrollment was successful
+      const validationResponse = await fetch(
+        `/api/auth/validate/?token=${resultToken}`
+      );
 
-        const token = await response.json();
+      const { success } = await validationResponse.json();
 
-        const resultToken = await authsignal.passkey.signUp({
-          token,
-          userName: session.user.email,
-        });
-
-        await fetch(`/api/auth/validate/?token=${resultToken}`);
+      if (success) {
+        alert("Successfully added passkey");
+      } else {
+        alert("Failed to add passkey");
       }
-    };
-    if (session && passkeyEnrollmentPromptMethods.includes(method)) {
-      enrollPasskey();
+    } catch (e: any) {
+      console.log(e);
     }
-  }, [session]);
+  };
 
   if (status === "loading") {
     return <div>Loading...</div>;
@@ -52,6 +51,7 @@ const WelcomePage = () => {
       <button onClick={() => signOut({ callbackUrl: "/signin" })}>
         Sign out
       </button>
+      <button onClick={enrollPasskey}>Create passkey</button>
     </div>
   );
 };
