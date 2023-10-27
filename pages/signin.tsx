@@ -45,9 +45,9 @@ const IndexPage = () => {
       <div style={{ marginBottom: "20px" }}>
         <input
           type="text"
-          id="username"
-          autoComplete="username webauthn"
-          placeholder="Username"
+          id="email"
+          autoComplete="email webauthn"
+          placeholder="Email"
           style={{
             width: "200px",
             padding: "10px",
@@ -59,7 +59,7 @@ const IndexPage = () => {
         <button
           onClick={handleClick}
           style={{
-            width: "200px",
+            width: "220px",
             backgroundColor: "#007bff",
             color: "white",
             border: "none",
@@ -67,7 +67,7 @@ const IndexPage = () => {
             cursor: "pointer",
           }}
         >
-          Sign in
+          Continue
         </button>
       </div>
     </div>
