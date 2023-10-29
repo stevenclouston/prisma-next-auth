@@ -22,11 +22,11 @@ const IndexPage = () => {
       if (authsignalToken) {
         signIn("credentials", {
           authsignalToken,
-          callbackUrl: "/welcome",
+          callbackUrl: "/",
         });
       }
     };
-    if (session !== null) {
+    if (status === "unauthenticated") {
       handlePasskeySignin();
     }
   }, [session]);
@@ -35,7 +35,7 @@ const IndexPage = () => {
     setLoading(true);
     await signIn("email", {
       email,
-      callbackUrl: "/welcome",
+      callbackUrl: "/",
     });
     setLoading(false);
   };

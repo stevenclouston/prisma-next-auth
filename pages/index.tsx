@@ -1,11 +1,20 @@
 import { useSession, signOut } from "next-auth/react";
 import { useAuthsignal } from "../utils/authsignal";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 const WelcomePage = () => {
   const { data: session, status } = useSession();
 
+  const router = useRouter();
+
   const authsignal = useAuthsignal();
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/signin");
+    }
+  }, [status]);
 
   const enrollPasskey = async () => {
     try {
