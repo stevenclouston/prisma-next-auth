@@ -1,5 +1,4 @@
-import NextAuth from "next-auth";
-import { createTransport } from "nodemailer";
+import NextAuth, { SessionStrategy } from "next-auth";
 import { PrismaClient } from "@prisma/client";
 import EmailProvider from "next-auth/providers/email";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -19,7 +18,7 @@ export const authOptions = {
   adapter: PrismaAdapter(prisma),
 
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as SessionStrategy,
   },
 
   callbacks: {},
@@ -49,7 +48,7 @@ export const authOptions = {
           const { state, userId } = result;
 
           if (state === "CHALLENGE_SUCCEEDED") {
-            return { id: userId, email: userId, name: "Steve" };
+            return { id: userId, email: userId };
           }
           return null;
         } catch (e: any) {
