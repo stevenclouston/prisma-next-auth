@@ -1,9 +1,8 @@
-import NextAuth, { SessionStrategy } from "next-auth";
-import { PrismaClient } from "@prisma/client";
-import EmailProvider from "next-auth/providers/email";
-import CredentialsProvider from "next-auth/providers/credentials";
-
 import { Authsignal } from "@authsignal/node";
+import { PrismaClient } from "@prisma/client";
+import NextAuth, { SessionStrategy } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import EmailProvider from "next-auth/providers/email";
 
 const authsignal = new Authsignal({
   secret: process.env.AUTHSIGNAL_TENANT_SECRET || "",

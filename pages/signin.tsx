@@ -1,5 +1,6 @@
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+
 import { useAuthsignal } from "../utils/authsignal";
 
 const IndexPage = () => {

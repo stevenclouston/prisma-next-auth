@@ -20,9 +20,8 @@
     "incremental": true
   },
   "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
+    "./pages/**/*.tsx",
+    "./pages/**/*.ts"
   ],
   "exclude": [
     "node_modules"

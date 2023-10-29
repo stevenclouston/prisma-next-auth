@@ -20,7 +20,7 @@ type AuthsignalProviderProps = {
 
 function AuthsignalProvider({ tenantId, children }: AuthsignalProviderProps) {
   const [authsignal, setAuthsignal] = React.useState<Authsignal | undefined>(
-    undefined
+    undefined,
   );
 
   useEffect(() => {
@@ -30,7 +30,7 @@ function AuthsignalProvider({ tenantId, children }: AuthsignalProviderProps) {
         new Authsignal({
           tenantId,
           baseUrl: process.env.NEXT_PUBLIC_AUTHSIGNAL_BASE_URL || "",
-        })
+        }),
       );
     }
   }, [authsignal, tenantId]);

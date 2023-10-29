@@ -1,5 +1,6 @@
-import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
+import { SessionProvider } from "next-auth/react";
+
 import { AuthsignalProvider } from "../utils/authsignal";
 import "./globals.css";
 

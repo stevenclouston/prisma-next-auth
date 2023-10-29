@@ -1,7 +1,8 @@
-import { useSession, signOut } from "next-auth/react";
-import { useAuthsignal } from "../utils/authsignal";
 import { useRouter } from "next/router";
+import { useSession, signOut } from "next-auth/react";
 import { useEffect } from "react";
+
+import { useAuthsignal } from "../utils/authsignal";
 
 const WelcomePage = () => {
   const { data: session, status } = useSession();
@@ -12,6 +13,7 @@ const WelcomePage = () => {
 
   useEffect(() => {
     if (status === "unauthenticated") {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       router.push("/signin");
     }
   }, [status]);
@@ -20,7 +22,7 @@ const WelcomePage = () => {
     try {
       //Get a short lived token by tracking an action
       const response = await fetch(
-        `/api/auth/track/?email=${session.user.email}`
+        `/api/auth/track/?email=${session.user.email}`,
       );
 
       const token = await response.json();
@@ -33,7 +35,7 @@ const WelcomePage = () => {
 
       //Check that the enrollment was successful
       const validationResponse = await fetch(
-        `/api/auth/validate/?token=${resultToken}`
+        `/api/auth/validate/?token=${resultToken}`,
       );
 
       const { success } = await validationResponse.json();
