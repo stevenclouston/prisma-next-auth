@@ -8,6 +8,17 @@
     "allowSyntheticDefaultImports": true,
     "target": "ES5",
     "jsx": "preserve",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "incremental": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true
   },
   "include": [
     "./pages/**/*.tsx",
