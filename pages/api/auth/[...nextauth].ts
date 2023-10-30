@@ -1,4 +1,5 @@
 import { Authsignal } from "@authsignal/node";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import NextAuth, { SessionStrategy } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -10,8 +11,6 @@ const authsignal = new Authsignal({
 });
 
 const prisma = new PrismaClient();
-
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
@@ -36,7 +35,7 @@ export const authOptions = {
     CredentialsProvider({
       name: "webauthn",
       credentials: {},
-      async authorize(cred: { authsignalToken: string }, req: any) {
+      async authorize(cred: { authsignalToken: string }) {
         const resultToken = cred.authsignalToken;
 
         try {

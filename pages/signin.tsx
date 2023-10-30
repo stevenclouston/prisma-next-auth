@@ -21,13 +21,14 @@ const IndexPage = () => {
       //Run NextAuth's sign in flow. This will run if the user selects one of their passkeys
       //from the Webauthn dropdown.
       if (authsignalToken) {
-        signIn("credentials", {
+        await signIn("credentials", {
           authsignalToken,
           callbackUrl: "/",
         });
       }
     };
     if (status === "unauthenticated") {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       handlePasskeySignin();
     }
   }, [session]);
