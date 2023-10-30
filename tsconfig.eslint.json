@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "types": ["@types/node"],
-    "noEmit": true
   },
   "extends": "./tsconfig.json",
 }
