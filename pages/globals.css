@@ -1,11 +1,12 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+  background-color: #ffffff;
   margin: 0;
   padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
+  color: #5a5a5a;
   height: 100vh;
 }
 .container {
@@ -14,10 +15,6 @@ body {
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   text-align: center;
-}
-.welcome-message {
-  font-size: 20px;
-  margin-bottom: 20px;
 }
 
 button {
@@ -33,12 +30,16 @@ button {
 
 input[type="text"] {
   width: 200px;
-  padding: 12px;
-  margin: 10px;
+  padding: 11px;
   border-radius: 5px;
   border: 1px solid #ccc;
 }
 
 button:hover {
   background-color: #0056b3;
+}
+
+p {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }

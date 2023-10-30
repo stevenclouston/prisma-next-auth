@@ -56,9 +56,10 @@ const WelcomePage = () => {
 
   return (
     <div className="container">
-      <div className="welcome-message">
+      <h3 className="welcome-message">
         Welcome, {session?.user?.email ?? session?.user?.name}
-      </div>
+      </h3>
+      <p>You now have a NextAuth session.</p>
       <button onClick={() => signOut({ callbackUrl: "/signin" })}>
         Sign out
       </button>

@@ -13,18 +13,22 @@ const IndexPage = () => {
 
   useEffect(() => {
     const handlePasskeySignin = async () => {
-      //Initialize the input for passkey autofill
-      const authsignalToken = await authsignal.passkey.signIn({
-        autofill: true,
-      });
-
-      //Run NextAuth's sign in flow. This will run if the user selects one of their passkeys
-      //from the Webauthn dropdown.
-      if (authsignalToken) {
-        await signIn("credentials", {
-          authsignalToken,
-          callbackUrl: "/",
+      try {
+        //Initialize the input for passkey autofill
+        const authsignalToken = await authsignal.passkey.signIn({
+          autofill: true,
         });
+
+        //Run NextAuth's sign in flow. This will run if the user selects one of their passkeys
+        //from the Webauthn dropdown.
+        if (authsignalToken) {
+          await signIn("credentials", {
+            authsignalToken,
+            callbackUrl: "/",
+          });
+        }
+      } catch (e: any) {
+        alert(e);
       }
     };
     if (status === "unauthenticated") {
@@ -48,6 +52,10 @@ const IndexPage = () => {
 
   return (
     <div>
+      <p>
+        Create an account or sign in with an <br />
+        existing account
+      </p>
       <input
         type="text"
         id="email"
