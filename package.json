@@ -1,5 +1,5 @@
 {
-  "name": "prisma-next-auth",
+  "name": "next-auth-passkeys-demo",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
